@@ -67,7 +67,7 @@ brand_model_update=api.model(
     'brand_model_update',
     {
         'brand_name':fields.String('brand name'),
-        'brand_image_url': fields.String('image id')
+        'brand_image_url': fields.String('image url')
     }
 )
 
