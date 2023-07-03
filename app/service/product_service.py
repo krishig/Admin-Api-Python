@@ -29,8 +29,8 @@ def post_product(data,user_id):
         )
         db.session.add(product_data)
         db.session.commit()
-        Product.query.filter_by(product_name = data["product_name"]).first()
-        return Product.serializer, 200
+        data = Product.query.filter_by(product_name = data["product_name"]).first()
+        return data.serializer, 200
     except Exception as e:
         print("Error: ", e.__repr__())
         return e.__repr__(), 409
