@@ -91,7 +91,7 @@ sub_category_model_patch = api.model(
     {
         'sub_category_name': fields.String('Sub Category name'),
         "category_id": fields.String("Category Id"),
-        "image_url": fields.String("image id")
+        "image_url": fields.String("image url")
     }
 )
 
