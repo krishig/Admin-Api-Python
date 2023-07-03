@@ -17,7 +17,7 @@ def post_brand(data,public_id):
     try:
         brand_data = Brands(
             brand_name=data["brand_name"],
-            brand_image_url=None if "brand_image_id" not in data.keys() or data["brand_image_id"] is None else data["brand_image_id"],
+            brand_image_url=None if "brand_image_url" not in data.keys() or data["brand_image_url"] is None else data["brand_image_url"],
             created_by=public_id
         )
         db.session.add(brand_data)

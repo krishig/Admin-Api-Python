@@ -148,7 +148,7 @@ class Sub_category(db.Model):
         return {
             "id": self.id,
             "sub_category_name": self.sub_category_name,
-            "category_id": self.category_id,
+            "sub_category_image": self.image_url,
             "category_name": None if self.category is None else self.category.category_name,
             "products": [x.serializer for x in self.product],
             "created_by": self.created_by,
