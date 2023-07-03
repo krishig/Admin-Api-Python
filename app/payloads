@@ -1,0 +1,19 @@
+{
+  "username": "Gaurav",
+  "fullname": "gaurav lokhande",
+  "email": "gouravlok@gmail.com",
+  "mobile_number": "7974279884",
+  "adhaar_number": "559524750015",
+  "password": "password",
+  "House_number": "3",
+  "landmark": "st paul school",
+  "postal_code": "462022",
+  "city": "Pune",
+  "state": "MH",
+  "Role": "1"
+}
+
+{
+  "username": "Gaurav",
+  "password": "password"
+}
