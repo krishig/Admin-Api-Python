@@ -2,7 +2,7 @@ from app import app,api,request,db,config
 from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
-    product_model,product_parser,product_model_patch,image_model,image_parser,role_parser_req,role_parser,user_parser_req, \
+    product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
     sub_category_parser_req
 
 from app.models import Users,Roles,Brands
@@ -195,7 +195,7 @@ class products(Resource):
 @api.route('/image')
 class image_upload(Resource):
 
-    @api.expect(image_parser,token,validate=True)
+    @api.expect(token,validate=True)
     @token_required
     def post(current_user,self):
         data=[]

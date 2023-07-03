@@ -1,4 +1,4 @@
-from werkzeug.datastructures import FileStorage
+# from werkzeug.datastructures import FileStorage
 
 from app import api,fields,reqparse
 token = api.parser()
@@ -137,8 +137,8 @@ image_model = api.model(
     }
 )
 
-image_parser = reqparse.RequestParser()
-image_parser.add_argument('images', type=FileStorage, location='files',action="append")
+# image_parser = reqparse.RequestParser()
+# image_parser.add_argument('images', type=FileStorage, location='files',action="append")
 
 role_parser = reqparse.RequestParser()
 role_parser.add_argument("id",type=int,help="Enter Role id", location='args')
