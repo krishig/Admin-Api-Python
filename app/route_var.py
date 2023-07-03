@@ -59,7 +59,7 @@ brand_model = api.model(
     'brand_model',
     {
         'brand_name':fields.String('brand name',required=True),
-        'brand_image_id': fields.String('image id')
+        'brand_image_url': fields.String('image url')
     }
 )
 
@@ -83,7 +83,7 @@ sub_category_model = api.model(
     {
         'sub_category_name': fields.String('Sub Category name',required=True),
         "category_id": fields.String("Category Id", required=True),
-        "image_url": fields.String("image id")
+        "image_url": fields.String("image url")
     }
 )
 sub_category_model_patch = api.model(
