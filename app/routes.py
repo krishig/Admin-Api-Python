@@ -3,10 +3,10 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req
+    sub_category_parser_req,image_id_parser
 
 from app.models import Users,Roles,Brands
-from app.service.product_image_service import post_product_image
+from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
 from app.service.user_service import get_users_list,post_user_details,patch_users,delete_users
 from app.service.user_login_service import post_user_login,token_required
@@ -235,3 +235,9 @@ class product_image(Resource):
     def post(current_user,self):
         data = api.payload
         return post_product_image(data=data,public_id=current_user.id)
+
+    @api.expect(image_id_parser,token,validate=True)
+    @token_required
+    def delete(current_user,self):
+        args = image_id_parser.parse_args()
+        return delete_product_image(args=args)
