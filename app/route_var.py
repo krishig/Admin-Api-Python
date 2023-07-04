@@ -9,12 +9,14 @@ signup_model = api.model(
         'username':fields.String('username',required=True),
         'fullname': fields.String('fullname',required=True),
         'email': fields.String('email',required=True),
+        'gender': fields.String('gender',required=True),
         'mobile_number': fields.String('mobile number',required=True),
-        'adhaar_number': fields.String('adhaar number',required=True),
+        'aadhaar_number': fields.String('aadhaar number',required=True),
         'password': fields.String('password',required=True),
-        'House_number': fields.String('House number',required=True),
+        'house_number': fields.String('House number',required=True),
         'landmark': fields.String('Landmark', required=True),
         'pincode': fields.String('xxxxxx',required=True),
+        'district': fields.String('Enter district', required=True),
         'city': fields.String('city',required=True),
         'state': fields.String('state',required=True),
         'Role': fields.String('Role',required=True)
@@ -28,12 +30,14 @@ signup_model_patch = api.model(
         'username':fields.String('username'),
         'fullname': fields.String('fullname'),
         'email': fields.String('email'),
+        'gender': fields.String('gender'),
         'mobile_number': fields.String('mobile number'),
-        'adhaar_number': fields.String('adhaar number'),
+        'aadhaar_number': fields.String('aadhaar number'),
         'password': fields.String('password'),
-        'House_number': fields.String('House number'),
+        'house_number': fields.String('house number'),
         'landmark': fields.String('Landmark'),
         'pincode': fields.String('xxxxxx'),
+        'district': fields.String('Enter district'),
         'city': fields.String('city'),
         'state': fields.String('state'),
         'Role': fields.String('Role')
@@ -169,3 +173,6 @@ sub_category_parser_req.add_argument('id',type=int,help='Enter sub category id',
 
 product_parser = reqparse.RequestParser()
 product_parser.add_argument('id',type=int,help='Enter the product id',location='args')
+
+image_id_parser = reqparse.RequestParser()
+image_id_parser.add_argument('id',type=int,help='Enter the image id',location='args',required=True)
