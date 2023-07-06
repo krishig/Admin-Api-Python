@@ -1,5 +1,7 @@
 from app.models import Product_image
 from app import db
+import boto3
+from app import config
 def post_product_image(data,public_id):
     product_id = data["product_id"]
     for i in data["image_list_url"]:
@@ -19,6 +21,11 @@ def delete_product_image(args):
         if data is not None:
             db.session.delete(data)
             db.session.commit()
+            s3 = boto3.resource("s3", region_name=config.bucket_name.region)
+            bucket_list = [x.name for x in s3.buckets.all()]
+            bucket_name = config.bucket_name.name
+            if bucket_name in bucket_list:
+                obj = s3.Object(bucket_name=bucket_name, key=data.image_name).delete()
             return "Data Deleted",200
         else:
             return "Data not found",404
