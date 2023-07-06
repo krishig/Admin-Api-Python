@@ -5,20 +5,22 @@ from app.config import *
 from app.models import Users
 from app import request
 def post_user_login(auth):
+    user = None
     if not auth or not auth["username"] or not auth["password"]:
         return "could not verify"
     user = Users.query.filter_by(username=auth["username"], password=auth["password"]).first()
-    if user.password:
-        token = jwt.encode({
-            'public_id': user.id,
-            'username': user.username,
-            'role': user.Role,
-            'exp': datetime.utcnow() + timedelta(minutes=45)
-        }
-            , BaseConfig.SECRET_KEY,
-            "HS256"
-        )
-        return token,201
+    if user is not None:
+        if user.password:
+            token = jwt.encode({
+                'public_id': user.id,
+                'username': user.username,
+                'role': user.Role,
+                'exp': datetime.utcnow() + timedelta(minutes=45)
+            }
+                , BaseConfig.SECRET_KEY,
+                "HS256"
+            )
+            return token,201
     return "Login failed", 401
 
 def token_required(f):
