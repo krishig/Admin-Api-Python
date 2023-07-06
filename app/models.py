@@ -84,7 +84,7 @@ class Brands(db.Model):
         return {
             "id": self.id,
             "brand_name": self.brand_name,
-            "brand_image_id": self.brand_image_url,
+            "brand_image_url": self.brand_image_url,
             "products": [x.serializer for x in self.product],
             "created_by": self.created_by,
             'created_at': str(self.created_at),

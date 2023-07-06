@@ -161,7 +161,7 @@ class sub_category(Resource):
 
     @api.expect(sub_category_parser_req,token,validate=True)
     @token_required
-    def delete(self):
+    def delete(current_user,self):
         args = category_parser.parse_args()
         return delete_sub_category(args=args)
 
