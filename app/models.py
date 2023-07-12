@@ -11,11 +11,11 @@ class Roles(db.Model):
     users = db.relationship('Users', backref='roles',uselist=True)
 
     @property
-    def serialize(self):
+    def serializer(self):
         return {
             'id': self.id,
             'role_name': self.role_name,
-            'users': [x.serialize for x in self.users],
+            'users': [x.serializer for x in self.users],
             'created_by': self.created_by,
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
@@ -45,7 +45,7 @@ class Users(db.Model):
 
 
     @property
-    def serialize(self):
+    def serializer(self):
         return {
             'id': self.id,
             'username': self.username,

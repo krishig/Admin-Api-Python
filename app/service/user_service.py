@@ -1,3 +1,6 @@
+import traceback
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.models import Users,Roles
 from sqlalchemy import exc
 from app.validation import email_validation
@@ -6,12 +9,20 @@ def get_users_list(args):
     try:
         if "id" in args.keys() and args["id"] is not None:
             user_data = Users.query.filter_by(id=args["id"]).first()
-            response={
-                "error": False,
-                "message": "details of user",
-                "data":user_data.serialize
-            }
-            return response
+            if user_data is not None:
+                response={
+                    "error": False,
+                    "message": "details of user",
+                    "data":user_data.serializer
+                }
+                return response,200
+            else:
+                response = {
+                    "error": True,
+                    "message": "no data found",
+                    "data": None
+                }
+                return response, 404
         else:
             user_data = Users.query.all()
             data_list = []
@@ -30,18 +41,27 @@ def get_users_list(args):
                 # data["created_at"] = str(i.created_at)
                 # data["modified_at"] = str(i.modified_at)
                 data={}
-                data_list.append(i.serialize)
+                data_list.append(i.serializer)
             response={
                 "error": False,
                 "message": "list of users",
                 "data": data_list
             }
-            return response
+            return response,200
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        error = error[1:len(error)-1].split(",")[1]
+        response = {
+            "error": True,
+            "message": error[2:len(error)-2],
+            "data": None
+        }
+        return response, 409
     except Exception as e:
         print("Error: ",e.__repr__())
         response={
             "error": True,
-            "message": e.__repr__(),
+            "message": "something went wrong",
             "data": None
         }
         return response, 409
@@ -49,7 +69,12 @@ def get_users_list(args):
 def post_user_details(data):
     try:
         if email_validation(data["email"]) == "Invalid Email":
-            return "please enter an email id", 406
+            response = {
+                "error": True,
+                "message": "Invalid Email",
+                "data": None
+            }
+            return response, 409
         if data != None:
             add_user = Users(
                 username=data['username'],
@@ -73,14 +98,22 @@ def post_user_details(data):
             response={
                 "error": False,
                 "message": "account created",
-                "data": user_data.serialize
+                "data": user_data.serializer
             }
-            return response
-    except Exception as e:
-        print("Error: ", e.__repr__())
+            return response,200
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        error = error[1:len(error)-1].split(",")[1]
         response = {
             "error": True,
-            "error_msg": e.__repr__(),
+            "message": error[2:len(error)-2],
+            "data": None
+        }
+        return response, 409
+    except Exception as e:
+        print("Error: ",e.__repr__())
+        response = {
+            "error": True,
             "message": "something went wrong",
             "data": None
         }
@@ -106,7 +139,7 @@ def patch_users(data,args,public_id):
             response={
                 "error": False,
                 "message": "data modified",
-                "data": user_data.serialize
+                "data": user_data.serializer
             }
             return response,200
         else:
@@ -116,11 +149,20 @@ def patch_users(data,args,public_id):
                 "data": None
             }
             return response,404
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        error = error[1:len(error)-1].split(",")[1]
+        response = {
+            "error": True,
+            "message": error[2:len(error)-2],
+            "data": None
+        }
+        return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
         response = {
             "error": True,
-            "message": e.__repr__(),
+            "message": "something went wrong",
             "data": None
         }
         return response,409
@@ -131,7 +173,12 @@ def delete_users(args):
         if "id" in args.keys() and args["id"] is not None:
             user_id = args["id"]
         else:
-            return "id not passed", 400
+            response = {
+                "error": True,
+                "message": "id not passed",
+                "data": None
+            }
+            return response, 400
         data = Users.query.filter_by(id=user_id).first()
         if data is not None:
             db.session.delete(data)
@@ -140,21 +187,30 @@ def delete_users(args):
             response={
                 "error": False,
                 "message": "data deleted",
-                "data": [i.serialize for i in user_data]
+                "data": [i.serializer for i in user_data]
             }
             return response,200
         else:
             response = {
-                "error": False,
+                "error": True,
                 "message": "data not found",
                 "data": None
             }
             return response, 404
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        error = error[1:len(error)-1].split(",")[1]
+        response = {
+            "error": True,
+            "message": error[2:len(error)-2],
+            "data": None
+        }
+        return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
         response={
             "error": True,
-            "message": e.__repr__(),
+            "message": "something went wrong",
             "data": None
         }
         return response, 409
