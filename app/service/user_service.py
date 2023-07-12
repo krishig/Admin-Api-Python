@@ -69,11 +69,11 @@ def post_user_details(data):
             )
             db.session.add(add_user)
             db.session.commit()
-            user_data = Users.query.filter_by(username=data['fullname']).first()
+            user_data = Users.query.filter_by(username=data['username']).first()
             response={
                 "error": False,
                 "message": "account created",
-                data: user_data.serialize
+                "data": user_data.serialize
             }
             return response
     except Exception as e:
