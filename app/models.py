@@ -137,6 +137,10 @@ class Category(db.Model):
         }
 
 class Sub_category(db.Model):
+
+    page_no = 0
+    items_per_page=10
+    offset=items_per_page
     id = db.Column(db.BigInteger,primary_key=True)
     sub_category_name = db.Column(db.String(255),nullable=False,unique=True)
     category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
@@ -145,8 +149,8 @@ class Sub_category(db.Model):
     created_at = db.Column(db.DateTime, default=now, nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
     modified_at = db.Column(db.DateTime, onupdate=now)
-    product = db.relationship('Product', backref='sub_category')
 
+    product = db.relationship('Product', backref='sub_category')
     @property
     def serializer(self):
         return {
@@ -154,7 +158,10 @@ class Sub_category(db.Model):
             "sub_category_name": self.sub_category_name,
             "sub_category_image": self.image_url,
             "category_name": None if self.category is None else self.category.category_name,
+            #"products": [x.serializer for x in self.product[(Sub_category.page_no-1)*
             "products": [x.serializer for x in self.product],
+            #"page_number":self.page_no,
+            #"total_product_pages": len(self.product)//Sub_category.items_per_page,
             "created_by": self.created_by,
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),

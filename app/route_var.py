@@ -2,7 +2,7 @@
 
 from app import api,fields,reqparse
 token = api.parser()
-token.add_argument("Authorization",location='headers')
+token.add_argument("Authorization",location='headers',required=True)
 signup_model = api.model(
     'signup_user',
     {
@@ -176,3 +176,9 @@ product_parser.add_argument('id',type=int,help='Enter the product id',location='
 
 image_id_parser = reqparse.RequestParser()
 image_id_parser.add_argument('id',type=int,help='Enter the image id',location='args',required=True)
+
+page_number = reqparse.RequestParser()
+page_number.add_argument('page_number',type=int,default=1,help='Enter the page number', location='args')
+
+items_per_page = reqparse.RequestParser()
+items_per_page.add_argument('items_per_page',type=int,default=10,help='Enter total items to fetch',location='args')
