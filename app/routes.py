@@ -52,13 +52,13 @@ class user(Resource):
     @token_required
     def get(current_user,self):
         args = user_parser.parse_args()
-        return get_users_list(args),200
+        return get_users_list(args)
 
     @api.expect(signup_model,validate=True)
     def post(self):
         try:
             data = api.payload
-            return post_user_details(data),201
+            return post_user_details(data)
         except exc.SQLAlchemyError as e:
             return e.__repr__()
 
