@@ -6,7 +6,12 @@ def get_users_list(args):
     try:
         if "id" in args.keys() and args["id"] is not None:
             user_data = Users.query.filter_by(id=args["id"]).first()
-            return user_data.serialize
+            response={
+                "error": False,
+                "message": "details of user",
+                "data":user_data.serialize
+            }
+            return response
         else:
             user_data = Users.query.all()
             data_list = []
@@ -26,10 +31,20 @@ def get_users_list(args):
                 # data["modified_at"] = str(i.modified_at)
                 data={}
                 data_list.append(i.serialize)
-            return data_list
+            response={
+                "error": False,
+                "message": "list of users",
+                "data": data_list
+            }
+            return response
     except Exception as e:
         print("Error: ",e.__repr__())
-        return e.__repr__(), 409
+        response={
+            "error": True,
+            "message": e.__repr__(),
+            "data": None
+        }
+        return response, 409
 
 def post_user_details(data):
     try:
@@ -54,10 +69,22 @@ def post_user_details(data):
             )
             db.session.add(add_user)
             db.session.commit()
-            return "Account Created"
+            user_data = Users.query.filter_by(username=data['fullname']).first()
+            response={
+                "error": False,
+                "message": "account created",
+                data: user_data.serialize
+            }
+            return response
     except Exception as e:
         print("Error: ", e.__repr__())
-        return e.__repr__(),409
+        response = {
+            "error": True,
+            "error_msg": e.__repr__(),
+            "message": "something went wrong",
+            "data": None
+        }
+        return response,409
 
 def patch_users(data,args,public_id):
     try:
@@ -66,16 +93,37 @@ def patch_users(data,args,public_id):
         if "id" in args.keys() and args["id"] is not None:
             user_id = args["id"]
         else:
-            return "id not passed", 400
+            response ={
+                "error": True,
+                "message": "id not passed",
+                "data": None
+            }
+            return response, 400
         if Users.query.filter_by(id=user_id).first() is not None:
             Users.query.filter_by(id=user_id).update(data)
             db.session.commit()
-            return "Data Modified",200
+            user_data = Users.query.filter_by(id=user_id).first()
+            response={
+                "error": False,
+                "message": "data modified",
+                "data": user_data.serialize
+            }
+            return response,200
         else:
-            return "No Data found",404
+            response={
+                "error": True,
+                "message": "no data found",
+                "data": None
+            }
+            return response,404
     except Exception as e:
         print("Error: ", e.__repr__())
-        return e.__repr__(),409
+        response = {
+            "error": True,
+            "message": e.__repr__(),
+            "data": None
+        }
+        return response,409
 
 def delete_users(args):
     try:
@@ -88,9 +136,25 @@ def delete_users(args):
         if data is not None:
             db.session.delete(data)
             db.session.commit()
-            return "Data Deleted",200
+            user_data = Users.query.all()
+            response={
+                "error": False,
+                "message": "data deleted",
+                "data": [i.serialize for i in user_data]
+            }
+            return response,200
         else:
-            return "Data not found", 404
+            response = {
+                "error": False,
+                "message": "data not found",
+                "data": None
+            }
+            return response, 404
     except Exception as e:
         print("Error: ", e.__repr__())
-        return e.__repr__(), 409
+        response={
+            "error": True,
+            "message": e.__repr__(),
+            "data": None
+        }
+        return response, 409
