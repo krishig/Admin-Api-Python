@@ -3,7 +3,7 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req,image_id_parser
+    sub_category_parser_req,image_id_parser,page_number,items_per_page
 
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
@@ -140,11 +140,13 @@ class categories(Resource):
 
 @api.route('/sub_category')
 class sub_category(Resource):
-    @api.expect(sub_category_parser,token,validate=True)
+    @api.expect(sub_category_parser,items_per_page,page_number,token,validate=True)
     @token_required
     def get(current_user,self):
         args = sub_category_parser.parse_args()
-        return get_sub_category_details(args=args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return get_sub_category_details(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
     @api.expect(sub_category_model, token, validate=True)
     @token_required
@@ -168,10 +170,14 @@ class sub_category(Resource):
 @api.route('/product')
 class products(Resource):
 
-    @api.expect(product_parser,token, validate=True)
-    def get(self):
+    @api.expect(product_parser,items_per_page,page_number,token, validate=True)
+    @token_required
+    def get(current_user,self):
         args = product_parser.parse_args()
-        return get_product_details(args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        #print(rows_per_page,page_no)
+        return get_product_details(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
     @api.expect(product_model,token,validate=True)
     @token_required

@@ -1,18 +1,26 @@
 from app.models import Product
 from app import db
 
-def get_product_details(args):
+def get_product_details(args,page_no,items_per_page):
     try:
+        paginate_result = {}
         if "id" in args.keys() and args["id"] is not None:
             product_data = Product.query.filter_by(id=args["id"]).first()
             return product_data.serializer,201
         else:
-            product_data = Product.query.all()
+            product_data = Product.query.paginate(page=page_no,per_page=items_per_page)
+            paginate_result["total_pages"]=product_data.pages
+            if product_data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if product_data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            paginate_result["result"]=[x.serializer for x in product_data]
            # print(category_data[0].sub_category)
-            return [x.serializer for x in product_data], 201
+            return paginate_result, 201
     except Exception as e:
         print("Error: ", e.__repr__())
         return e.__repr__(), 409
+
 def post_product(data,user_id):
     try:
         product_data = Product(
