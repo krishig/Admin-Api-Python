@@ -165,7 +165,7 @@ def delete_sub_category(args):
                 "message": "data not found",
                 "data": None
             }
-            return response, 404
+        return response, 404
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]

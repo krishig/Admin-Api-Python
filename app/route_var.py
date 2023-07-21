@@ -177,6 +177,9 @@ product_parser.add_argument('id',type=int,help='Enter the product id',location='
 image_id_parser = reqparse.RequestParser()
 image_id_parser.add_argument('id',type=int,help='Enter the image id',location='args',required=True)
 
+image_url_parser=reqparse.RequestParser()
+image_url_parser.add_argument('image_name',type=str,help='Enter Image name',location='args',required=True)
+
 page_number = reqparse.RequestParser()
 page_number.add_argument('page_number',type=int,default=1,help='Enter the page number', location='args')
 

@@ -3,7 +3,7 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req,image_id_parser,page_number,items_per_page
+    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser
 
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
@@ -14,6 +14,7 @@ from app.service.brand_service import get_brand_details,post_brand,patch_brand,d
 from app.service.category_service import post_category, get_category_details,patch_category_details,delete_category
 from app.service.sub_category_service import post_sub_category,get_sub_category_details,patch_sub_category_details,delete_sub_category
 from app.service.product_service import post_product,patch_product,get_product_details,delete_product
+from app.service.delete_image_from_s3 import delete_image
 from sqlalchemy import exc
 import boto3
 import os
@@ -167,6 +168,14 @@ class sub_category(Resource):
         args = category_parser.parse_args()
         return delete_sub_category(args=args)
 
+@api.route('/subcategory/delete_image')
+class delete_subcategory(Resource):
+    @api.expect(image_url_parser,token,validate=True)
+    def delete(self):
+        args = image_url_parser.parse_args()
+        return delete_image(args)
+
+
 @api.route('/product')
 class products(Resource):
 
@@ -207,7 +216,7 @@ class image_upload(Resource):
         data=[]
         allowed_extension = ['png','jpeg','jpg']
         # if "multipart/form-data" in request.headers['Content-Type']:
-        files = request.files.getlist("filename[]")
+        files = request.files.getlist("filename")
         for file in files:
             ext = file.filename.split(".")[1]
             if ext in allowed_extension:
@@ -230,8 +239,18 @@ class image_upload(Resource):
                     result["url"]=image_s3_url
                     data.append(result)
             else:
-                return "plz select png,jpeg,jpg extension file"
-        return {"result":data},200
+                response = {
+                    "error": False,
+                    "message": "plz select png,jpeg,jpg extension file",
+                    "data": None
+                }
+                return response
+            response = {
+                "error": False,
+                "message": "Image uploaded",
+                "data": data
+            }
+        return response,200
         # else:
         #     return "Wrong Content-Type"
 @api.route("/product_image")
