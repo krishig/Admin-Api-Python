@@ -6,6 +6,7 @@ def post_sub_category(data,public_id):
         data_sub_category = Sub_category(
             sub_category_name = data['sub_category_name'],
             category_id = data['category_id'],
+            image_url = data['image_url'],
             created_by = public_id
         )
         db.session.add(data_sub_category)
@@ -165,7 +166,8 @@ def delete_sub_category(args):
                 "message": "data not found",
                 "data": None
             }
-        return response, 404
+            return response, 404
+        return response, 201
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
