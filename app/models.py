@@ -158,6 +158,7 @@ class Sub_category(db.Model):
             "sub_category_name": self.sub_category_name,
             "sub_category_image": self.image_url,
             "category_name": None if self.category is None else self.category.category_name,
+            "image_url": self.image_url,
             #"products": [x.serializer for x in self.product[(Sub_category.page_no-1)*
             "products": [x.serializer for x in self.product],
             #"page_number":self.page_no,
