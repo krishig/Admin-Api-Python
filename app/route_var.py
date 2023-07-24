@@ -185,3 +185,10 @@ page_number.add_argument('page_number',type=int,default=1,help='Enter the page n
 
 items_per_page = reqparse.RequestParser()
 items_per_page.add_argument('items_per_page',type=int,default=10,help='Enter total items to fetch',location='args')
+
+search_product = reqparse.RequestParser()
+search_product.add_argument('search_product',type=str,help='Search by brand name',location='args')
+search_brand = reqparse.RequestParser()
+search_brand.add_argument('search_brand',type=str,help='Search by brand name',location='args')
+search_sub_category = reqparse.RequestParser()
+search_sub_category.add_argument('search_sub_category',type=str,help='Search by sub-category name',location='args')

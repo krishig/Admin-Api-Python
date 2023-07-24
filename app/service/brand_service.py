@@ -45,6 +45,7 @@ def get_brand_details(args):
             "data": None
         }
         return response, 409
+
 def post_brand(data,public_id):
     try:
         brand_data = Brands(
@@ -159,6 +160,55 @@ def delete_brands(args):
                 "data": None
             }
             return response, 404
+    except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            error = error[1:len(error) - 1].split(",")[1]
+            response = {
+                "error": True,
+                "message": error[2:len(error) - 2],
+                "data": None
+            }
+            return response, 409
+    except Exception as e:
+        print("Error: ", e.__repr__())
+        response = {
+            "error": True,
+            "message": "something went wrong",
+            "data": None
+        }
+        return response, 409
+
+def search_brands(args,page_no,items_per_page):
+    try:
+        if "search_brand" in args.keys() and args["search_brand"] is not None:
+            search = "%{}%".format(args['search_brand'])
+            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
+            data = Brands.query.filter(Brands.brand_name.like(search)).paginate(page=page_no,per_page=items_per_page)
+            #print(data)
+            paginate_result= {}
+            if data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            if data.pages is not None:
+                paginate_result["total_pages"]=data.pages
+            paginate_result["result"] = [i.serializer for i in data]
+            #print(data)
+
+            response = {
+                "error": False,
+                "message": "brand search result",
+                "data": paginate_result
+            }
+
+            return response,200
+        else:
+            response = {
+                "error": True,
+                "message": "search_brands args not passed in url",
+                "data": None
+            }
+            return response, 400
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
