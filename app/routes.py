@@ -3,17 +3,18 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser
+    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product
 
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
 from app.service.user_service import get_users_list,post_user_details,patch_users,delete_users
 from app.service.user_login_service import post_user_login,token_required
-from app.service.brand_service import get_brand_details,post_brand,patch_brand,delete_brands
+from app.service.brand_service import get_brand_details, post_brand, patch_brand, delete_brands, search_brands
 from app.service.category_service import post_category, get_category_details,patch_category_details,delete_category
 from app.service.sub_category_service import post_sub_category,get_sub_category_details,patch_sub_category_details,delete_sub_category
-from app.service.product_service import post_product,patch_product,get_product_details,delete_product
+from app.service.product_service import post_product, patch_product, get_product_details, delete_product, \
+    search_products
 from app.service.delete_image_from_s3 import delete_image
 from sqlalchemy import exc
 import boto3
@@ -206,6 +207,24 @@ class products(Resource):
     def delete(current_user,self):
         args = product_parser.parse_args()
         return delete_product(args=args)
+
+@api.route('/product/search')
+class product_search(Resource):
+
+    @api.expect(search_product,token,vaildate=True)
+    @token_required
+    def get(current_user,self):
+        args = search_product.parse_args()
+        return search_products(args=args)
+
+@api.route('/product_brand/search')
+class product_search(Resource):
+
+    @api.expect(search_product,token,vaildate=True)
+    @token_required
+    def get(current_user,self):
+        args = search_product.parse_args()
+        return search_brands(args=args)
 
 @api.route('/image')
 class image_upload(Resource):

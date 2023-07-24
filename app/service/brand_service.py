@@ -45,6 +45,7 @@ def get_brand_details(args):
             "data": None
         }
         return response, 409
+
 def post_brand(data,public_id):
     try:
         brand_data = Brands(
@@ -159,6 +160,46 @@ def delete_brands(args):
                 "data": None
             }
             return response, 404
+    except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            error = error[1:len(error) - 1].split(",")[1]
+            response = {
+                "error": True,
+                "message": error[2:len(error) - 2],
+                "data": None
+            }
+            return response, 409
+    except Exception as e:
+        print("Error: ", e.__repr__())
+        response = {
+            "error": True,
+            "message": "something went wrong",
+            "data": None
+        }
+        return response, 409
+
+def search_brands(args,page_no,items_per_page):
+    try:
+        if "search_product" in args.keys() and args["search_product"] is not None:
+            search = "%{}%".format(args['search_product'])
+            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
+            data = Brands.query.filter(Brands.brand_name.like(search)).all()
+            #print(data)
+            result = [i.serializer for i in data]
+            response = {
+                "error": False,
+                "message": "product search result",
+                "data": result
+            }
+
+            return response,200
+        else:
+            response = {
+                "error": True,
+                "message": "search_product args not passed in url",
+                "data": None
+            }
+            return response, 400
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]

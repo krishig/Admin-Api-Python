@@ -2,6 +2,7 @@ from app.models import Product
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
+from sqlalchemy import or_
 def get_product_details(args,page_no,items_per_page):
     try:
         paginate_result = {}
@@ -54,6 +55,50 @@ def get_product_details(args,page_no,items_per_page):
         }
         return response, 409
 
+def search_products(args,page_no,items_per_page):
+    try:
+        if "search_product" in args.keys() and args["search_product"] is not None:
+            search = "%{}%".format(args['search_product'])
+            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
+            data = Product.query.filter(Product.product_name.like(search)).paginate(page=page_no,per_page=items_per_page).all()
+            #print(data)
+            paginate_result= {}
+            if data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            paginate_result["result"] = [i.serializer for i in data]
+            response = {
+                "error": False,
+                "message": "product search result",
+                "data": paginate_result
+            }
+
+            return response,200
+        else:
+            response = {
+                "error": True,
+                "message": "search_product args not passed in url",
+                "data": None
+            }
+            return response, 400
+    except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            error = error[1:len(error) - 1].split(",")[1]
+            response = {
+                "error": True,
+                "message": error[2:len(error) - 2],
+                "data": None
+            }
+            return response, 409
+    except Exception as e:
+        print("Error: ", e.__repr__())
+        response = {
+            "error": True,
+            "message": "something went wrong",
+            "data": None
+        }
+        return response, 409
 def post_product(data,user_id):
     try:
         product_data = Product(
