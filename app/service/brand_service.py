@@ -180,23 +180,32 @@ def delete_brands(args):
 
 def search_brands(args,page_no,items_per_page):
     try:
-        if "search_product" in args.keys() and args["search_product"] is not None:
-            search = "%{}%".format(args['search_product'])
+        if "search_brand" in args.keys() and args["search_brand"] is not None:
+            search = "%{}%".format(args['search_brand'])
             #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
-            data = Brands.query.filter(Brands.brand_name.like(search)).all()
+            data = Brands.query.filter(Brands.brand_name.like(search)).paginate(page=page_no,per_page=items_per_page)
             #print(data)
-            result = [i.serializer for i in data]
+            paginate_result= {}
+            if data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            if data.pages is not None:
+                paginate_result["total_pages"]=data.pages
+            paginate_result["result"] = [i.serializer for i in data]
+            #print(data)
+
             response = {
                 "error": False,
-                "message": "product search result",
-                "data": result
+                "message": "brand search result",
+                "data": paginate_result
             }
 
             return response,200
         else:
             response = {
                 "error": True,
-                "message": "search_product args not passed in url",
+                "message": "search_brands args not passed in url",
                 "data": None
             }
             return response, 400

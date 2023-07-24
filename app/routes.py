@@ -3,7 +3,7 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product
+    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product,search_brand,search_sub_category
 
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
@@ -12,7 +12,8 @@ from app.service.user_service import get_users_list,post_user_details,patch_user
 from app.service.user_login_service import post_user_login,token_required
 from app.service.brand_service import get_brand_details, post_brand, patch_brand, delete_brands, search_brands
 from app.service.category_service import post_category, get_category_details,patch_category_details,delete_category
-from app.service.sub_category_service import post_sub_category,get_sub_category_details,patch_sub_category_details,delete_sub_category
+from app.service.sub_category_service import post_sub_category, get_sub_category_details, patch_sub_category_details, \
+    delete_sub_category, search_sub_categories
 from app.service.product_service import post_product, patch_product, get_product_details, delete_product, \
     search_products
 from app.service.delete_image_from_s3 import delete_image
@@ -211,20 +212,36 @@ class products(Resource):
 @api.route('/product/search')
 class product_search(Resource):
 
-    @api.expect(search_product,token,vaildate=True)
+    @api.expect(search_product,items_per_page,page_number,token,vaildate=True)
     @token_required
     def get(current_user,self):
         args = search_product.parse_args()
-        return search_products(args=args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return search_products(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
 @api.route('/product_brand/search')
-class product_search(Resource):
+class product_brand_search(Resource):
 
-    @api.expect(search_product,token,vaildate=True)
+    @api.expect(items_per_page,page_number,token,search_brand,token,vaildate=True)
     @token_required
     def get(current_user,self):
-        args = search_product.parse_args()
-        return search_brands(args=args)
+        args = search_brand.parse_args()
+
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return search_brands(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
+
+@api.route('/sub_category/search')
+class sub_category_search(Resource):
+
+    @api.expect(items_per_page,page_number,token,search_sub_category,token,vaildate=True)
+    @token_required
+    def get(current_user,self):
+        args = search_sub_category.parse_args()
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return search_sub_categories(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
 @api.route('/image')
 class image_upload(Resource):
