@@ -89,11 +89,13 @@ class user_login(Resource):
 @api.route('/product_brands')
 class product_brands(Resource):
 
-    @api.expect(brand_parser,token,validate=True)
+    @api.expect(brand_parser,items_per_page,page_number,token,validate=True)
     @token_required
     def get(current_user,self):
         args = brand_parser.parse_args()
-        return get_brand_details(args=args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return get_brand_details(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
     @api.expect(brand_model,token,validate=True)
     @token_required

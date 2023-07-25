@@ -1,6 +1,7 @@
 from app import db
 from app.models import Sub_category
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
 def post_sub_category(data,public_id):
     try:
         data_sub_category = Sub_category(
@@ -51,7 +52,7 @@ def get_sub_category_details(args,page_no,items_per_page):
                 response = {
                     "error": False,
                     "message": "sub category details",
-                    "data": sub_category_data.serializer
+                    "data": {"result":sub_category_data.serializer}
                 }
                 return response,201
             else:
@@ -64,12 +65,21 @@ def get_sub_category_details(args,page_no,items_per_page):
         else:
             Sub_category.page_no=0
             Sub_category.offset=items_per_page
-            sub_category_data = Sub_category.query.all()
+            paginate_result={}
+            sub_category_data = Sub_category.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
            # print(category_data[0].sub_category)
+            paginate_result["total_pages"]=sub_category_data.pages
+            if sub_category_data.has_next==True:
+                paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if sub_category_data.has_prev==True:
+                paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            if sub_category_data.pages is not None:
+                paginate_result["total_pages"]=sub_category_data.pages
+            paginate_result["result"]=[x.serializer for x in sub_category_data]
             response = {
                 "error": False,
                 "message": "list of sub category",
-                "data": [x.serializer for x in sub_category_data]
+                "data": paginate_result
             }
             return response, 201
     except SQLAlchemyError as e:
@@ -195,9 +205,9 @@ def search_sub_categories(args,page_no,items_per_page):
             #print(data)
             paginate_result= {}
             if data.has_next==True:
-                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
             if data.has_prev==True:
-                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
             if data.pages is not None:
                 paginate_result["total_pages"]=data.pages
             paginate_result["result"] = [i.serializer for i in data]

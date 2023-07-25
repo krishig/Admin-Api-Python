@@ -14,7 +14,9 @@ def get_product_details(args,page_no,items_per_page):
                 response = {
                     "error": False,
                     "message": "product data detail",
-                    "data": product_data.serializer
+                    "data": {
+                        "result":product_data.serializer
+                    }
                 }
                 return response, 200
             else:
