@@ -1,3 +1,5 @@
+import json
+
 from app.models import Product
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -86,6 +88,46 @@ def search_products(args,page_no,items_per_page):
                 "data": None
             }
             return response, 400
+    except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            error = error[1:len(error) - 1].split(",")[1]
+            response = {
+                "error": True,
+                "message": error[2:len(error) - 2],
+                "data": None
+            }
+            return response, 409
+    except Exception as e:
+        print("Error: ", e.__repr__())
+        response = {
+            "error": True,
+            "message": "something went wrong",
+            "data": None
+        }
+        return response, 409
+
+def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
+    try:
+
+        paginate_result={}
+        filters = []
+        if "sub_category_id" in sub_cat_id.keys() and sub_cat_id["sub_category_id"] is not None:
+            filters.append(Product.sub_category_id==sub_cat_id["sub_category_id"])
+        if "brand_id" in brand_id.keys() and brand_id["brand_id"] is not None:
+            filters.append(Product.brand_id==brand_id["brand_id"])
+        print(filters)
+        product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        print(product_data)
+        paginate_result["total_pages"]=product_data.pages
+        if product_data.has_next==True:
+            paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+        if product_data.has_prev==True:
+            paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+        if product_data.pages is not None:
+            paginate_result["total_pages"]=product_data.pages
+        paginate_result["result"]=[x.serializer for x in product_data]
+        print(paginate_result)
+        return paginate_result
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]

@@ -3,8 +3,8 @@ from app import Resource, fields,Namespace
 from app.route_var import signup_model, signup_model_patch, login_model, role_model, user_parser, brand_model, brand_model_update, token, \
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
-    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product,search_brand,search_sub_category
-
+    sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product,search_brand,search_sub_category,\
+    filter_product_sub_category_id,filter_product_brand_id
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
@@ -15,7 +15,7 @@ from app.service.category_service import post_category, get_category_details,pat
 from app.service.sub_category_service import post_sub_category, get_sub_category_details, patch_sub_category_details, \
     delete_sub_category, search_sub_categories
 from app.service.product_service import post_product, patch_product, get_product_details, delete_product, \
-    search_products
+    search_products, filter_products
 from app.service.delete_image_from_s3 import delete_image
 from sqlalchemy import exc
 import boto3
@@ -243,6 +243,16 @@ class sub_category_search(Resource):
         rows_per_page = items_per_page.parse_args()
         return search_sub_categories(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
+@api.route('/product/filter')
+class product_filter(Resource):
+    @api.expect(items_per_page,page_number,filter_product_sub_category_id,filter_product_brand_id,token,validate=True)
+    @token_required
+    def get(current_user,self):
+        sub_category_id = filter_product_sub_category_id.parse_args()
+        brand_id = filter_product_brand_id.parse_args()
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return filter_products(sub_cat_id=sub_category_id,brand_id=brand_id,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 @api.route('/image')
 class image_upload(Resource):
 
@@ -255,32 +265,32 @@ class image_upload(Resource):
         files = request.files.getlist("filename")
         for file in files:
             ext = file.filename.split(".")[1]
-            if ext in allowed_extension:
-                result={}
-                #file.save(file.filename)
-                file_name=file.filename
-                s3 = boto3.resource("s3",region_name = config.bucket_name.region)
-                bucket_list= [x.name for x in s3.buckets.all()]
-                bucket_name = config.bucket_name.name
-                print(bucket_list)
-                if bucket_name in bucket_list:
-                    loc = "./temp"
+            #if ext in allowed_extension:
+            result={}
+            #file.save(file.filename)
+            file_name=file.filename
+            s3 = boto3.resource("s3",region_name = config.bucket_name.region)
+            bucket_list= [x.name for x in s3.buckets.all()]
+            bucket_name = config.bucket_name.name
+            print(bucket_list)
+            if bucket_name in bucket_list:
+                loc = "./temp"
 
-                    file.save("".join([loc,file_name]))
-                    s3_key_file= "".join([str(datetime.now()),file_name])
-                    s3.Bucket(bucket_name).upload_file(Filename="".join([loc,file_name]), Key=s3_key_file)
-                    os.remove("".join([loc,file_name]))
-                    image_s3_url= "https://krishig.s3.%s.amazonaws.com/%s"%(config.bucket_name.region,s3_key_file)
-                    result["file_name"]=file_name
-                    result["url"]=image_s3_url
-                    data.append(result)
-            else:
-                response = {
-                    "error": False,
-                    "message": "plz select png,jpeg,jpg extension file",
-                    "data": None
-                }
-                return response
+                file.save("".join([loc,file_name]))
+                s3_key_file= "".join([str(datetime.now()),file_name])
+                s3.Bucket(bucket_name).upload_file(Filename="".join([loc,file_name]), Key=s3_key_file)
+                os.remove("".join([loc,file_name]))
+                image_s3_url= "https://krishig.s3.%s.amazonaws.com/%s"%(config.bucket_name.region,s3_key_file)
+                result["file_name"]=file_name
+                result["url"]=image_s3_url
+                data.append(result)
+            # else:
+            #     response = {
+            #         "error": False,
+            #         "message": "plz select png,jpeg,jpg extension file",
+            #         "data": None
+            #     }
+            #return response
             response = {
                 "error": False,
                 "message": "Image uploaded",

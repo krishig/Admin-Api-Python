@@ -192,3 +192,8 @@ search_brand = reqparse.RequestParser()
 search_brand.add_argument('search_brand',type=str,help='Search by brand name',location='args')
 search_sub_category = reqparse.RequestParser()
 search_sub_category.add_argument('search_sub_category',type=str,help='Search by sub-category name',location='args')
+filter_product_sub_category_id = reqparse.RequestParser()
+filter_product_sub_category_id.add_argument('sub_category_id',type=str,help='filter by sub_category id',location='args')
+
+filter_product_brand_id = reqparse.RequestParser()
+filter_product_brand_id.add_argument('brand_id',type=str,help='filter by brand id',location='args')
