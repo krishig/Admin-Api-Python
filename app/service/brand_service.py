@@ -1,7 +1,8 @@
 from app.models import Brands
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
-def get_brand_details(args):
+from sqlalchemy import text
+def get_brand_details(args,page_no,items_per_page):
     try:
         if "id" in args.keys() and args["id"] is not None:
             brand_data = Brands.query.filter_by(id=args["id"]).first()
@@ -9,7 +10,7 @@ def get_brand_details(args):
                 response={
                     "error": False,
                     "message": "details of brand",
-                    "data": brand_data.serializer
+                    "data": {"result":brand_data.serializer}
                 }
                 return response,201
             else:
@@ -20,12 +21,23 @@ def get_brand_details(args):
                 }
                 return response, 404
         else:
-            brands_data = Brands.query.all()
+            paginate_result={}
+            #print("Running")
+            brands_data = Brands.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
+            #brands_data["total_pages"]=brands_data.pages
+           # print("brands_data")
+            if brands_data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if brands_data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            if brands_data.pages is not None:
+                paginate_result["total_pages"]=brands_data.pages
+            paginate_result["result"]=[x.serializer for x in brands_data]
            # print(category_data[0].sub_category)
             response={
                 "error": False,
                 "message": "list of brands available",
-                "data": [x.serializer for x in brands_data]
+                "data": paginate_result
             }
             return response, 201
     except SQLAlchemyError as e:
