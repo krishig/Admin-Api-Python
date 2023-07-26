@@ -138,6 +138,14 @@ image_model = api.model(
     {
         'product_id': fields.String('product id',required=True),
         'image_list_url': fields.List(fields.Nested(metadata_model),required=True)
+        # "image_one_url": fields.String('image one url'),
+        # "image_one_filename":fields.String('image one filename'),
+        # "image_two_url": fields.String('image two url'),
+        # "image_two_filename": fields.String('image two filename'),
+        # "image_three_url": fields.String('image three url'),
+        # "image_three_filename": fields.String('image three filename'),
+        # "image_four_url": fields.String('image four url'),
+        # "image_four_filename": fields.String('image four filename')
     }
 )
 
