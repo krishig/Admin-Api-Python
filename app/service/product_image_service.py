@@ -56,7 +56,7 @@ def delete_product_image(args):
             response = {
                 "error": False,
                 "message": "image removed",
-                "data": data.serializer
+                "data": {"result":data.serializer}
             }
             return response
         else:
