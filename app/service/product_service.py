@@ -117,9 +117,9 @@ def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
             filters.append(Product.sub_category_id==sub_cat_id["sub_category_id"])
         if "brand_id" in brand_id.keys() and brand_id["brand_id"] is not None:
             filters.append(Product.brand_id==brand_id["brand_id"])
-        print(filters)
+        #print(filters)
         product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
-        print(product_data)
+        #print(product_data)
         paginate_result["total_pages"]=product_data.pages
         if product_data.has_next==True:
             paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
@@ -128,8 +128,13 @@ def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
         if product_data.pages is not None:
             paginate_result["total_pages"]=product_data.pages
         paginate_result["result"]=[x.serializer for x in product_data]
-        print(paginate_result)
-        return paginate_result
+        #print(paginate_result)
+        response = {
+                "error": False,
+                "message": "result of filter",
+                "data": {"result":paginate_result}
+            }
+        return response
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
