@@ -1,11 +1,11 @@
 import traceback
 from sqlalchemy.exc import SQLAlchemyError
-
+from sqlalchemy import text
 from app.models import Users,Roles
 from sqlalchemy import exc
 from app.validation import email_validation
 from app import db
-def get_users_list(args):
+def get_users_list(args,page_no,items_per_page):
     try:
         if "id" in args.keys() and args["id"] is not None:
             user_data = Users.query.filter_by(id=args["id"]).first()
@@ -24,9 +24,18 @@ def get_users_list(args):
                 }
                 return response, 404
         else:
-            user_data = Users.query.all()
-            data_list = []
-            for i in user_data:
+            paginate_result = {}
+            user_data = Users.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
+            paginate_result["total_pages"]=user_data.pages
+            if user_data.has_next==True:
+                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            if user_data.has_prev==True:
+                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            if user_data.pages is not None:
+                paginate_result["total_pages"]=user_data.pages
+            paginate_result["result"]=[x.serializer for x in user_data]
+            #data_list = []
+            #for i in user_data:
                 # data = {}
                 # data["id"] = i.id
                 # data["username"] = i.username
@@ -40,12 +49,12 @@ def get_users_list(args):
                 # data["Role"] = i.Role
                 # data["created_at"] = str(i.created_at)
                 # data["modified_at"] = str(i.modified_at)
-                data={}
-                data_list.append(i.serializer)
+                #data={}
+                #data_list.append(i.serializer)
             response={
                 "error": False,
                 "message": "list of users",
-                "data": data_list
+                "data": paginate_result
             }
             return response,200
     except SQLAlchemyError as e:

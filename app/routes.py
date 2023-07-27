@@ -51,11 +51,13 @@ class user_role(Resource):
 
 @api.route('/user')
 class user(Resource):
-    @api.expect(user_parser,token)
+    @api.expect(items_per_page,page_number,user_parser,token)
     @token_required
     def get(current_user,self):
         args = user_parser.parse_args()
-        return get_users_list(args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return get_users_list(args, page_no=page_no['page_number'], items_per_page=rows_per_page['items_per_page'])
 
     @api.expect(signup_model,validate=True)
     def post(self):
