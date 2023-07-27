@@ -223,7 +223,7 @@ def search_sub_categories(args,page_no,items_per_page):
         else:
             response = {
                 "error": True,
-                "message": "search_brands args not passed in url",
+                "message": "search_sub_category args not passed in url",
                 "data": None
             }
             return response, 400
