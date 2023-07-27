@@ -132,7 +132,7 @@ def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
         response = {
                 "error": False,
                 "message": "result of filter",
-                "data": {"result":paginate_result}
+                "data": paginate_result
             }
         return response
     except SQLAlchemyError as e:
