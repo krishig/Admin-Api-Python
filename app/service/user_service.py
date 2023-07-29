@@ -65,7 +65,7 @@ def get_users_list(args,page_no,items_per_page):
             "message": error[2:len(error)-2],
             "data": None
         }
-        return response, 409
+        return response, 200
     except Exception as e:
         print("Error: ",e.__repr__())
         response={
@@ -118,7 +118,7 @@ def post_user_details(data):
             "message": error[2:len(error)-2],
             "data": None
         }
-        return response, 409
+        return response, 200
     except Exception as e:
         print("Error: ",e.__repr__())
         response = {
@@ -166,7 +166,7 @@ def patch_users(data,args,public_id):
             "message": error[2:len(error)-2],
             "data": None
         }
-        return response, 409
+        return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
         response = {
@@ -261,7 +261,7 @@ def search_users(args,page_no,items_per_page):
                 "message": error[2:len(error) - 2],
                 "data": None
             }
-            return response, 409
+            return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
         response = {
