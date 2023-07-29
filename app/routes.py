@@ -4,11 +4,11 @@ from app.route_var import signup_model, signup_model_patch, login_model, role_mo
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
     sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product,search_brand,search_sub_category,\
-    filter_product_sub_category_id,filter_product_brand_id
+    filter_product_sub_category_id,filter_product_brand_id,search_user
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
-from app.service.user_service import get_users_list,post_user_details,patch_users,delete_users
+from app.service.user_service import get_users_list, post_user_details, patch_users, delete_users, search_users
 from app.service.user_login_service import post_user_login,token_required
 from app.service.brand_service import get_brand_details, post_brand, patch_brand, delete_brands, search_brands
 from app.service.category_service import post_category, get_category_details,patch_category_details,delete_category
@@ -51,11 +51,13 @@ class user_role(Resource):
 
 @api.route('/user')
 class user(Resource):
-    @api.expect(user_parser,token)
+    @api.expect(items_per_page,page_number,user_parser,token)
     @token_required
     def get(current_user,self):
         args = user_parser.parse_args()
-        return get_users_list(args)
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return get_users_list(args, page_no=page_no['page_number'], items_per_page=rows_per_page['items_per_page'])
 
     @api.expect(signup_model,validate=True)
     def post(self):
@@ -244,6 +246,17 @@ class sub_category_search(Resource):
         page_no = page_number.parse_args()
         rows_per_page = items_per_page.parse_args()
         return search_sub_categories(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
+
+@api.route('/user/search')
+class user_search(Resource):
+
+    @api.expect(items_per_page,page_number,token,search_user,token,vaildate=True)
+    @token_required
+    def get(current_user,self):
+        args = search_user.parse_args()
+        page_no = page_number.parse_args()
+        rows_per_page = items_per_page.parse_args()
+        return search_users(args=args,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 
 @api.route('/product/filter')
 class product_filter(Resource):
