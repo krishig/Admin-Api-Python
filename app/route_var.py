@@ -203,6 +203,8 @@ search_sub_category.add_argument('search_sub_category',type=str,help='Search by 
 search_user = reqparse.RequestParser()
 search_user.add_argument('search_user',type=str,help='Search by username',location='args')
 
+filter_product_category_id = reqparse.RequestParser()
+filter_product_category_id.add_argument('category_id',type=str,help='filter by category id',location='args')
 filter_product_sub_category_id = reqparse.RequestParser()
 filter_product_sub_category_id.add_argument('sub_category_id',type=str,help='filter by sub_category id',location='args')
 filter_product_brand_id = reqparse.RequestParser()
