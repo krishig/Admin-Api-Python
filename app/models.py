@@ -197,6 +197,7 @@ class Product(db.Model):
         "base_unit": self.base_unit,
         "discount": self.discount,
         "sub_category_id": self.sub_category_id,
+        "category_id": None if self.modified_by is None else self.sub_category.category_id,
         "sub_category_name": None if self.sub_category is None else self.sub_category.sub_category_name,
         "brand_id": self.brand_id,
         "brand_name": None if self.brands is None else self.brands.brand_name,

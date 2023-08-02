@@ -1,6 +1,6 @@
 import json
 
-from app.models import Product
+from app.models import Product, Sub_category
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
@@ -108,7 +108,7 @@ def search_products(args,page_no,items_per_page):
         }
         return response, 409
 
-def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
+def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
     try:
 
         paginate_result={}
@@ -117,8 +117,12 @@ def filter_products(sub_cat_id,brand_id,page_no,items_per_page):
             filters.append(Product.sub_category_id==sub_cat_id["sub_category_id"])
         if "brand_id" in brand_id.keys() and brand_id["brand_id"] is not None:
             filters.append(Product.brand_id==brand_id["brand_id"])
+        if "category_id" in category_id.keys() and category_id["category_id"] is not None:
+            print(category_id)
+            filters.append((Sub_category.category_id==category_id['category_id']))
         #print(filters)
-        product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        #product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        product_data = db.session.query(Product).outerjoin(Sub_category,Product.sub_category_id==Sub_category.id).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
         #print(product_data)
         paginate_result["total_pages"]=product_data.pages
         if product_data.has_next==True:

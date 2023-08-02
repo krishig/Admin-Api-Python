@@ -4,7 +4,7 @@ from app.route_var import signup_model, signup_model_patch, login_model, role_mo
     brand_parser,brand_parser_req, category_model, category_parser, sub_category_model,sub_category_parser,sub_category_model_patch,\
     product_model,product_parser,product_model_patch,image_model,role_parser_req,role_parser,user_parser_req, \
     sub_category_parser_req,image_id_parser,page_number,items_per_page,image_url_parser,search_product,search_brand,search_sub_category,\
-    filter_product_sub_category_id,filter_product_brand_id,search_user
+    filter_product_sub_category_id,filter_product_brand_id,search_user,filter_product_category_id
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
@@ -260,14 +260,15 @@ class user_search(Resource):
 
 @api.route('/product/filter')
 class product_filter(Resource):
-    @api.expect(items_per_page,page_number,filter_product_sub_category_id,filter_product_brand_id,token,validate=True)
+    @api.expect(items_per_page,page_number,filter_product_category_id,filter_product_sub_category_id,filter_product_brand_id,token,validate=True)
     @token_required
     def get(current_user,self):
         sub_category_id = filter_product_sub_category_id.parse_args()
         brand_id = filter_product_brand_id.parse_args()
+        category_id = filter_product_category_id.parse_args()
         page_no = page_number.parse_args()
         rows_per_page = items_per_page.parse_args()
-        return filter_products(sub_cat_id=sub_category_id,brand_id=brand_id,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
+        return filter_products(sub_cat_id=sub_category_id,category_id=category_id,brand_id=brand_id,page_no=page_no['page_number'],items_per_page=rows_per_page['items_per_page'])
 @api.route('/image')
 class image_upload(Resource):
 
@@ -327,3 +328,9 @@ class product_image(Resource):
     def delete(current_user,self):
         args = image_id_parser.parse_args()
         return delete_product_image(args=args)
+
+class generate_otp(Resource):
+
+    @api.expect(token,validate=True)
+    def get(self):
+        pass
