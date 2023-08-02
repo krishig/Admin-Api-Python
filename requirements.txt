@@ -12,6 +12,4 @@ SQLAlchemy
 Werkzeug
 alembic
 Flask-Cors
-//vonage
-//translate
 deep-translator

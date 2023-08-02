@@ -2,6 +2,7 @@ from app import db
 from app.models import Sub_category
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
+from sqlalchemy import or_
 def post_sub_category(data,public_id):
     try:
         data_sub_category = Sub_category(
@@ -227,6 +228,49 @@ def search_sub_categories(args,page_no,items_per_page):
                 "data": None
             }
             return response, 400
+    except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            error = error[1:len(error) - 1].split(",")[1]
+            response = {
+                "error": True,
+                "message": error[2:len(error) - 2],
+                "data": None
+            }
+            return response, 409
+    except Exception as e:
+        print("Error: ", e.__repr__())
+        response = {
+            "error": True,
+            "message": "something went wrong",
+            "data": None
+        }
+        return response, 409
+
+def filter_sub_category(category_id,page_no,items_per_page):
+    try:
+        paginate_result={}
+        filters = []
+        if "category_id" in category_id.keys() and category_id["category_id"] is not None:
+            filters.append((Sub_category.category_id==category_id['category_id']))
+        #print(filters)
+        #product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        product_data = db.session.query(Sub_category).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        #print(product_data)
+        paginate_result["total_pages"]=product_data.pages
+        if product_data.has_next==True:
+            paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+        if product_data.has_prev==True:
+            paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+        if product_data.pages is not None:
+            paginate_result["total_pages"]=product_data.pages
+        paginate_result["result"]=[x.serializer for x in product_data]
+        #print(paginate_result)
+        response = {
+                "error": False,
+                "message": "result of filter",
+                "data": paginate_result
+            }
+        return response
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
