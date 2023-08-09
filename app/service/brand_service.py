@@ -22,18 +22,15 @@ def get_brand_details(args,page_no,items_per_page):
                 return response, 404
         else:
             paginate_result={}
-            #print("Running")
             brands_data = Brands.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
-            #brands_data["total_pages"]=brands_data.pages
-           # print("brands_data")
+            paginate_url="/product_brands?items_per_page=%s&page_number=%s"
             if brands_data.has_next==True:
-                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
             if brands_data.has_prev==True:
-                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = paginate_url % (items_per_page, page_no - 1)
             if brands_data.pages is not None:
                 paginate_result["total_pages"]=brands_data.pages
             paginate_result["result"]=[x.serializer for x in brands_data]
-           # print(category_data[0].sub_category)
             response={
                 "error": False,
                 "message": "list of brands available",
@@ -194,14 +191,15 @@ def search_brands(args,page_no,items_per_page):
     try:
         if "search_brand" in args.keys() and args["search_brand"] is not None:
             search = "%{}%".format(args['search_brand'])
-            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
+            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all(
             data = Brands.query.filter(Brands.brand_name.like(search)).paginate(page=page_no,per_page=items_per_page)
             #print(data)
             paginate_result= {}
+            paginate_url="/product_brands?items_per_page=%s&page_number=%s"
             if data.has_next==True:
-                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
             if data.has_prev==True:
-                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = paginate_url % (items_per_page, page_no - 1)
             if data.pages is not None:
                 paginate_result["total_pages"]=data.pages
             paginate_result["result"] = [i.serializer for i in data]

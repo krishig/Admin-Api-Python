@@ -29,10 +29,11 @@ def get_product_details(args,page_no,items_per_page):
         else:
             product_data = Product.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
             paginate_result["total_pages"]=product_data.pages
+            paginate_url="/product?items_per_page=%s&page_number=%s"
             if product_data.has_next==True:
-                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
             if product_data.has_prev==True:
-                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = paginate_url % (items_per_page, page_no - 1)
             if product_data.pages is not None:
                 paginate_result["total_pages"]=product_data.pages
             paginate_result["result"]=[x.serializer for x in product_data]
@@ -41,7 +42,7 @@ def get_product_details(args,page_no,items_per_page):
                 "message": "product data list",
                 "data": paginate_result
             }
-           # print(category_data[0].sub_category)
+            # print(category_data[0].sub_category)
             return response, 201
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
@@ -65,14 +66,13 @@ def search_products(args,page_no,items_per_page):
     try:
         if "search_product" in args.keys() and args["search_product"] is not None:
             search = "%{}%".format(args['search_product'])
-            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
             data = Product.query.filter(Product.product_name.like(search)).paginate(page=page_no,per_page=items_per_page)
-            #print(data)
             paginate_result= {}
+            paginate_url="/product?items_per_page=%s&page_number=%s"
             if data.has_next==True:
-                paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
             if data.has_prev==True:
-                paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = paginate_url % (items_per_page, page_no - 1)
             if data.pages is not None:
                 paginate_result["total_pages"]=data.pages
             paginate_result["result"] = [i.serializer for i in data]
@@ -125,19 +125,20 @@ def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
         product_data = db.session.query(Product).outerjoin(Sub_category,Product.sub_category_id==Sub_category.id).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
         #print(product_data)
         paginate_result["total_pages"]=product_data.pages
+        paginate_url="/product?items_per_page=%s&page_number=%s"
         if product_data.has_next==True:
-            paginate_result["next_page"]="/product?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
         if product_data.has_prev==True:
-            paginate_result["prev_page"] = "/product?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            paginate_result["prev_page"] = paginate_url % (items_per_page, page_no - 1)
         if product_data.pages is not None:
             paginate_result["total_pages"]=product_data.pages
         paginate_result["result"]=[x.serializer for x in product_data]
         #print(paginate_result)
         response = {
-                "error": False,
-                "message": "result of filter",
-                "data": paginate_result
-            }
+            "error": False,
+            "message": "result of filter",
+            "data": paginate_result
+        }
         return response
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])

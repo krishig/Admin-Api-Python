@@ -70,8 +70,9 @@ def get_sub_category_details(args,page_no,items_per_page):
             sub_category_data = Sub_category.query.order_by(text("id desc")).paginate(page=page_no,per_page=items_per_page)
            # print(category_data[0].sub_category)
             paginate_result["total_pages"]=sub_category_data.pages
+            paginate_url="/sub_category?items_per_page=%s&page_number=%s"
             if sub_category_data.has_next==True:
-                paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
             if sub_category_data.has_prev==True:
                 paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
             if sub_category_data.pages is not None:
@@ -201,19 +202,16 @@ def search_sub_categories(args,page_no,items_per_page):
     try:
         if "search_sub_category" in args.keys() and args["search_sub_category"] is not None:
             search = "%{}%".format(args['search_sub_category'])
-            #data = Product.query.filter(Product.sub_category.has(sub_category_name=search)).all()
             data = Sub_category.query.filter(Sub_category.sub_category_name.like(search)).paginate(page=page_no,per_page=items_per_page)
-            #print(data)
             paginate_result= {}
+            paginate_url = "/sub_category?items_per_page=%s&page_number=%s"
             if data.has_next==True:
-                paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+                paginate_result["next_page"] = paginate_url%(items_per_page,page_no+1)
             if data.has_prev==True:
-                paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+                paginate_result["prev_page"] = paginate_url% (items_per_page, page_no - 1)
             if data.pages is not None:
                 paginate_result["total_pages"]=data.pages
             paginate_result["result"] = [i.serializer for i in data]
-            #print(data)
-
             response = {
                 "error": False,
                 "message": "brand search result",
@@ -252,19 +250,17 @@ def filter_sub_category(category_id,page_no,items_per_page):
         filters = []
         if "category_id" in category_id.keys() and category_id["category_id"] is not None:
             filters.append((Sub_category.category_id==category_id['category_id']))
-        #print(filters)
-        #product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+
         product_data = db.session.query(Sub_category).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
-        #print(product_data)
         paginate_result["total_pages"]=product_data.pages
+        paginate_url="/sub_category?items_per_page=%s&page_number=%s"
         if product_data.has_next==True:
-            paginate_result["next_page"]="/sub_category?items_per_page=%s&page_number=%s"%(items_per_page,page_no+1)
+            paginate_result["next_page"]=paginate_url%(items_per_page,page_no+1)
         if product_data.has_prev==True:
-            paginate_result["prev_page"] = "/sub_category?items_per_page=%s&page_number=%s" % (items_per_page, page_no - 1)
+            paginate_result["prev_page"] = paginate_url% (items_per_page, page_no - 1)
         if product_data.pages is not None:
             paginate_result["total_pages"]=product_data.pages
         paginate_result["result"]=[x.serializer for x in product_data]
-        #print(paginate_result)
         response = {
                 "error": False,
                 "message": "result of filter",
