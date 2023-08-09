@@ -27,7 +27,7 @@ def post_sub_category(data,public_id):
             "message": error[2:len(error) - 2],
             "data": None
         }
-        return response, 409
+        return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
         response = {
