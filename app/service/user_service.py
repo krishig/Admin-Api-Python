@@ -5,6 +5,11 @@ from app.models import Users,Roles
 from sqlalchemy import exc
 from app.validation import email_validation
 from app import db
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def get_users_list(args,page_no,items_per_page):
     try:
         if "id" in args.keys() and args["id"] is not None:
@@ -60,6 +65,7 @@ def get_users_list(args,page_no,items_per_page):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -68,6 +74,7 @@ def get_users_list(args,page_no,items_per_page):
         return response, 200
     except Exception as e:
         print("Error: ",e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response={
             "error": True,
             "message": "something went wrong",
@@ -113,6 +120,7 @@ def post_user_details(data):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -121,6 +129,7 @@ def post_user_details(data):
         return response, 200
     except Exception as e:
         print("Error: ",e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -161,6 +170,7 @@ def patch_users(data,args,public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -169,6 +179,7 @@ def patch_users(data,args,public_id):
         return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -209,6 +220,7 @@ def delete_users(args):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -217,6 +229,7 @@ def delete_users(args):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response={
             "error": True,
             "message": "something went wrong",
@@ -256,6 +269,7 @@ def search_users(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -264,6 +278,7 @@ def search_users(args,page_no,items_per_page):
             return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",

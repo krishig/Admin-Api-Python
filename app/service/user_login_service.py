@@ -4,6 +4,11 @@ from datetime import datetime,timedelta
 from app.config import *
 from app.models import Users
 from app import request
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def post_user_login(auth):
     user = None
     if not auth or not auth["username"] or not auth["password"]:
@@ -55,6 +60,7 @@ def token_required(f):
         # print(current_user.user_role)
         except Exception as e:
             print(e)
+            logging.error("409"+"-"+e.__repr__())
             response = {
                 "error": True,
                 'message': 'token is invalid here',

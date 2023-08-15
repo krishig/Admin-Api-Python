@@ -2,6 +2,11 @@ from app.models import Brands
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def get_brand_details(args,page_no,items_per_page):
     try:
         if "id" in args.keys() and args["id"] is not None:
@@ -40,6 +45,7 @@ def get_brand_details(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -48,6 +54,7 @@ def get_brand_details(args,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -74,6 +81,7 @@ def post_brand(data,public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -82,6 +90,7 @@ def post_brand(data,public_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -121,16 +130,18 @@ def patch_brand(args,data,public_id):
             }
             return response, 404
     except SQLAlchemyError as e:
-            error = str(e.__dict__['orig'])
-            error = error[1:len(error) - 1].split(",")[1]
-            response = {
-                "error": True,
-                "message": error[2:len(error) - 2],
-                "data": None
-            }
-            return response, 409
+        error = str(e.__dict__['orig'])
+        error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
+        response = {
+            "error": True,
+            "message": error[2:len(error) - 2],
+            "data": None
+        }
+        return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -172,6 +183,7 @@ def delete_brands(args):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -180,6 +192,7 @@ def delete_brands(args):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -222,6 +235,7 @@ def search_brands(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -230,6 +244,7 @@ def search_brands(args,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",

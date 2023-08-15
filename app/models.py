@@ -185,7 +185,7 @@ class Product(db.Model):
     modified_by = db.Column(db.BigInteger, nullable=True)
     modified_at = db.Column(db.DateTime, onupdate=now)
     product_image = db.relationship('Product_image', backref='product')
-
+    #order_items = db.relationship('Order_items', backref='product',uselist=False)
     @property
     def serializer(self):
         return {
@@ -208,3 +208,23 @@ class Product(db.Model):
         'modified_by': None if self.modified_by is None else str(self.modified_by),
         'modified_at': None if self.modified_at is None else str(self.modified_at)
         }
+
+# class Orders(db.Model):
+#     id = db.Column(db.BigInteger,primary_key=True),
+#     customer_id =db.Column(db.BigInteger,nullable=False)
+#     order_id = db.Column(db.String,nullable=False)
+#     created_by = db.Column(db.BigInteger, default=1, nullable=False)
+#     created_at = db.Column(db.DateTime, default=now, nullable=False)
+#     modified_by = db.Column(db.BigInteger, nullable=True)
+#     modified_at = db.Column(db.DateTime, onupdate=now)
+# class Order_items(db.Model):
+#     id = db.Column(db.BigInteger,primary_key=True),
+#     price_after_discount=db.Column(db.Integer,nullable=False),
+#     totalProductDiscountPrice=db.Column(db.Integer,nullable=False)
+#     quantity=db.Column(db.BigInteger,nullable=False),
+#     order_id = db.Column(db.BigInteger,nullable=False),
+#     product_id = db.Column(db.BigInteger,db.ForeignKey('product.id')),
+#     created_by = db.Column(db.BigInteger, default=1, nullable=False)
+#     created_at = db.Column(db.DateTime, default=now, nullable=False)
+#     modified_by = db.Column(db.BigInteger, nullable=True)
+#     modified_at = db.Column(db.DateTime, onupdate=now)

@@ -4,6 +4,11 @@ import boto3
 from app.models import Product
 from sqlalchemy.exc import SQLAlchemyError
 from app import config
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def post_product_image(data,public_id):
     try:
         product_id = data["product_id"]
@@ -26,6 +31,7 @@ def post_product_image(data,public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -34,6 +40,7 @@ def post_product_image(data,public_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -69,6 +76,7 @@ def delete_product_image(args):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -77,6 +85,7 @@ def delete_product_image(args):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
