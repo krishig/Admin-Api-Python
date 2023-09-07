@@ -4,6 +4,7 @@ from .config import BaseConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+
 app = Flask(__name__)
 blueprint=Blueprint('Api',__name__,url_prefix="/python")
 CORS(app)
