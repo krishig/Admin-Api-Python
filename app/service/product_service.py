@@ -5,6 +5,11 @@ from app import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from sqlalchemy import or_
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def get_product_details(args,page_no,items_per_page):
     try:
         paginate_result = {}
@@ -47,6 +52,7 @@ def get_product_details(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -55,6 +61,7 @@ def get_product_details(args,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -93,6 +100,7 @@ def search_products(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -101,6 +109,7 @@ def search_products(args,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -143,6 +152,7 @@ def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -151,6 +161,7 @@ def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -183,6 +194,7 @@ def post_product(data,user_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -191,6 +203,7 @@ def post_product(data,user_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -231,6 +244,7 @@ def patch_product(data,args, public_id):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -239,6 +253,7 @@ def patch_product(data,args, public_id):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -278,6 +293,7 @@ def delete_product(args):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -286,6 +302,7 @@ def delete_product(args):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",

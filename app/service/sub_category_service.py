@@ -3,6 +3,11 @@ from app.models import Sub_category
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from sqlalchemy import or_
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def post_sub_category(data,public_id):
     try:
         data_sub_category = Sub_category(
@@ -22,14 +27,16 @@ def post_sub_category(data,public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
             "data": None
         }
-        return response, 409
+        return response, 200
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -87,6 +94,7 @@ def get_sub_category_details(args,page_no,items_per_page):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -95,6 +103,7 @@ def get_sub_category_details(args,page_no,items_per_page):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -135,6 +144,7 @@ def patch_sub_category_details(data,args, public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -143,6 +153,7 @@ def patch_sub_category_details(data,args, public_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -183,6 +194,7 @@ def delete_sub_category(args):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -191,6 +203,7 @@ def delete_sub_category(args):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": False,
             "message": "something went wrong",
@@ -229,6 +242,7 @@ def search_sub_categories(args,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -237,6 +251,7 @@ def search_sub_categories(args,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -270,6 +285,7 @@ def filter_sub_category(category_id,page_no,items_per_page):
     except SQLAlchemyError as e:
             error = str(e.__dict__['orig'])
             error = error[1:len(error) - 1].split(",")[1]
+            logging.error("409"+"-"+str(e.__dict__['orig']))
             response = {
                 "error": True,
                 "message": error[2:len(error) - 2],
@@ -278,6 +294,7 @@ def filter_sub_category(category_id,page_no,items_per_page):
             return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",

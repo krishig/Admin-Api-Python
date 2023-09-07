@@ -1,6 +1,11 @@
 from app import db
 from app.models import Category
 from sqlalchemy.exc import SQLAlchemyError
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='app.log',
+                    filemode='a')
 def post_category(data,public_id):
     try:
         category_data = Category(
@@ -19,6 +24,7 @@ def post_category(data,public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error) - 1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error) - 2],
@@ -27,6 +33,7 @@ def post_category(data,public_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -65,6 +72,7 @@ def get_category_details(args):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -73,6 +81,7 @@ def get_category_details(args):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -113,6 +122,7 @@ def patch_category_details(data,args, public_id):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -121,6 +131,7 @@ def patch_category_details(data,args, public_id):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": True,
             "message": "something went wrong",
@@ -161,6 +172,7 @@ def delete_category(args):
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         error = error[1:len(error)-1].split(",")[1]
+        logging.error("409"+"-"+str(e.__dict__['orig']))
         response = {
             "error": True,
             "message": error[2:len(error)-2],
@@ -169,6 +181,7 @@ def delete_category(args):
         return response, 409
     except Exception as e:
         print("Error: ", e.__repr__())
+        logging.error("409"+"-"+e.__repr__())
         response = {
             "error": False,
             "message": "something went wrong",
