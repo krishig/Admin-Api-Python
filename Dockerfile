@@ -18,6 +18,6 @@ RUN pip install -r requirements.txt
 # copy every content from the local file to the image
 
 # configure the container to run in an executed manner
-ENTRYPOINT [ "NEW_RELIC_CONFIG_FILE=newrelic.ini", "newrelic-admin", "run-program", "python", "main.py" ]
+ENTRYPOINT ["python"]
 
-#CMD ["main.py" ]
+CMD ["main.py" ]
