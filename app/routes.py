@@ -11,6 +11,7 @@ from app.route_var import signup_model, signup_model_patch, login_model, role_mo
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
+from app.service.slider import get_image_from_bucket
 from app.service.user_service import get_users_list, post_user_details, patch_users, delete_users, search_users
 from app.service.user_login_service import post_user_login,token_required
 from app.service.brand_service import get_brand_details, post_brand, patch_brand, delete_brands, search_brands
@@ -342,6 +343,13 @@ class product_image(Resource):
         args = image_id_parser.parse_args()
         return delete_product_image(args=args)
 
+@api.route("/slider_image")
+class slider_image(Resource):
+
+    @api.expect(token,validate=True)
+    @token_required
+    def get(current_user,self):
+        return get_image_from_bucket()
 class generate_otp(Resource):
 
     @api.expect(token,validate=True)

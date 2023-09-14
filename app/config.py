@@ -17,3 +17,7 @@ class bucket_name:
     name="krishig"
     region='ap-south-1'
 
+class slider_bucket_name:
+    name="krishig-salesuser-slider"
+    region='ap-south-1'
+
