@@ -16,7 +16,9 @@ def get_image_from_bucket():
             "data": []
         }
         for x in image_obj.objects.all():
-            url = "https://%s.s3.%s.amazonaws.com/%s"%(config.slider_bucket_name.name,config.bucket_name.region,x.key)
+            url = {
+                "image":"https://%s.s3.%s.amazonaws.com/%s"%(config.slider_bucket_name.name,config.bucket_name.region,x.key)
+            }
             response["data"].append(url)
         return response
     except Exception as e:
