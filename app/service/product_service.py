@@ -4,7 +4,7 @@ from app.models import Product, Sub_category
 from app import db
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
-from sqlalchemy import or_
+from sqlalchemy import and_
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -131,7 +131,7 @@ def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
             filters.append((Sub_category.category_id==category_id['category_id']))
         #print(filters)
         #product_data = db.session.query(Product).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
-        product_data = db.session.query(Product).outerjoin(Sub_category,Product.sub_category_id==Sub_category.id).filter(or_(*filters)).paginate(page=page_no,per_page=items_per_page)
+        product_data = db.session.query(Product).outerjoin(Sub_category,Product.sub_category_id==Sub_category.id).filter(and_(*filters)).paginate(page=page_no,per_page=items_per_page)
         #print(product_data)
         paginate_result["total_pages"]=product_data.pages
         paginate_url="/product?items_per_page=%s&page_number=%s"
