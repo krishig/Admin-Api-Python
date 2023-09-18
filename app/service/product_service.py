@@ -122,11 +122,11 @@ def filter_products(sub_cat_id,category_id,brand_id,page_no,items_per_page):
 
         paginate_result={}
         filters = []
-        if "sub_category_id" in sub_cat_id.keys() and sub_cat_id["sub_category_id"] is not None:
+        if "sub_category_id" in sub_cat_id.keys() and sub_cat_id["sub_category_id"] is not None and sub_cat_id["sub_category_id"]!="":
             filters.append(Product.sub_category_id==sub_cat_id["sub_category_id"])
-        if "brand_id" in brand_id.keys() and brand_id["brand_id"] is not None:
+        if "brand_id" in brand_id.keys() and (brand_id["brand_id"] is not None and brand_id["brand_id"]!=""):
             filters.append(Product.brand_id==brand_id["brand_id"])
-        if "category_id" in category_id.keys() and category_id["category_id"] is not None:
+        if "category_id" in category_id.keys() and category_id["category_id"] is not None and category_id["category_id"]!="":
             print(category_id)
             filters.append((Sub_category.category_id==category_id['category_id']))
         #print(filters)
