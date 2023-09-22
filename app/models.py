@@ -1,15 +1,16 @@
 from app import db
 from datetime import datetime
 from pytz import timezone
+from sqlalchemy import func
 now = datetime.utcnow()
 now = now.astimezone(timezone('Asia/Kolkata'))
 class Roles(db.Model):
     id = db.Column(db.BigInteger,primary_key=True)
     role_name = db.Column(db.String(20),nullable=False,unique=True)
     created_by = db.Column(db.BigInteger,default=1,nullable=False)
-    created_at = db.Column(db.DateTime,default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')),nullable=False)
+    created_at = db.Column(db.DateTime,default=func.localtime(),nullable=False)
     modified_by = db.Column(db.BigInteger,nullable=True)
-    modified_at = db.Column(db.DateTime,onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime,onupdate=func.localtime())
     users = db.relationship('Users', backref='roles',uselist=True)
 
     @property
@@ -40,7 +41,7 @@ class Users(db.Model):
     state = db.Column(db.String(255),nullable=False)
     Role = db.Column(db.BigInteger,db.ForeignKey('roles.id'))
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
     modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
 
@@ -76,9 +77,9 @@ class Brands(db.Model):
     brand_name = db.Column(db.String(100),nullable=True,unique=True)
     brand_image_url = db.Column(db.Text,nullable=True)
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime, onupdate=func.localtime())
     product = db.relationship('Product', backref='brands')
 
     @property
@@ -100,9 +101,9 @@ class Product_image(db.Model):
     image_name = db.Column(db.String(255),nullable=True)
     product_id = db.Column(db.BigInteger,db.ForeignKey('product.id'))
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime, onupdate=func.localtime())
     @property
     def serializer(self):
         return {
@@ -121,9 +122,9 @@ class Category(db.Model):
     id = db.Column(db.BigInteger,primary_key=True)
     category_name = db.Column(db.String(255),nullable=False,unique=True)
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime, onupdate=func.localtime())
     sub_category = db.relationship('Sub_category', backref='category')
 
     @property
@@ -148,9 +149,9 @@ class Sub_category(db.Model):
     category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
     image_url = db.Column(db.Text,nullable=True)
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime, onupdate=func.localtime())
 
     product = db.relationship('Product', backref='sub_category')
     @property
@@ -183,9 +184,9 @@ class Product(db.Model):
     brand_id = db.Column(db.BigInteger,db.ForeignKey('brands.id'))
     product_description = db.Column(db.Text, nullable=True)
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow().astimezone(timezone('Asia/Kolkata')), nullable=False)
+    created_at = db.Column(db.DateTime, default=func.localtime(), nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=datetime.utcnow().astimezone(timezone('Asia/Kolkata')))
+    modified_at = db.Column(db.DateTime, onupdate=func.localtime())
     product_image = db.relationship('Product_image', backref='product')
     #order_items = db.relationship('Order_items', backref='product',uselist=False)
     @property
