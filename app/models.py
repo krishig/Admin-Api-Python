@@ -1,6 +1,8 @@
 from app import db
 from datetime import datetime
+from pytz import timezone
 now = datetime.utcnow()
+now = now.astimezone(timezone('Asia/Kolkata'))
 class Roles(db.Model):
     id = db.Column(db.BigInteger,primary_key=True)
     role_name = db.Column(db.String(20),nullable=False,unique=True)
