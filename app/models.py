@@ -1,7 +1,8 @@
 from app import db
 from datetime import datetime
+from pytz import timezone
 now = datetime.utcnow()
-from sqlalchemy.sql import func
+now = now.astimezone(timezone('Asia/Kolkata'))
 class Roles(db.Model):
     id = db.Column(db.BigInteger,primary_key=True)
     role_name = db.Column(db.String(20),nullable=False,unique=True)
@@ -147,9 +148,9 @@ class Sub_category(db.Model):
     category_id = db.Column(db.BigInteger, db.ForeignKey('category.id'))
     image_url = db.Column(db.Text,nullable=True)
     created_by = db.Column(db.BigInteger, default=1, nullable=False)
-    created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=now, nullable=False)
     modified_by = db.Column(db.BigInteger, nullable=True)
-    modified_at = db.Column(db.DateTime, onupdate=func.now())
+    modified_at = db.Column(db.DateTime, onupdate=now)
 
     product = db.relationship('Product', backref='sub_category')
     @property
