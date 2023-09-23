@@ -20,7 +20,7 @@ def post_user_login(auth):
                 'public_id': user.id,
                 'username': user.username,
                 'role': user.Role,
-                'exp': datetime.utcnow() + timedelta(minutes=1)
+                'exp': datetime.utcnow() + timedelta(days=7)
             }
                 , BaseConfig.SECRET_KEY,
                 "HS256"
