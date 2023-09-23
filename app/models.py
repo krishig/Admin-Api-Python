@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from pytz import timezone
 from sqlalchemy import func
+from sqlalchemy import text
 now = datetime.utcnow()
 now = now.astimezone(timezone('Asia/Kolkata'))
 class Roles(db.Model):
@@ -19,7 +20,7 @@ class Roles(db.Model):
             'id': self.id,
             'role_name': self.role_name,
             'users': [x.serializer for x in self.users],
-            'created_by': self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -66,7 +67,7 @@ class Users(db.Model):
             'state': self.state,
             'Role': self.Role,
             'Role_name': None if self.roles is None else self.roles.role_name,
-            'created_by': self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -89,7 +90,7 @@ class Brands(db.Model):
             "brand_name": self.brand_name,
             "brand_image_url": self.brand_image_url,
             "products": [x.serializer for x in self.product],
-            "created_by": self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -112,7 +113,7 @@ class Product_image(db.Model):
             "image_name": self.image_name,
            # 'product_id': self.product.id,
            # 'brand_name': self.product.brand_name,
-            "created_by": self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -133,7 +134,7 @@ class Category(db.Model):
             "id": self.id,
             "category_name": self.category_name,
             "sub_category": [x.serializer for x in self.sub_category],
-            "created_by": self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -166,7 +167,7 @@ class Sub_category(db.Model):
             "products": [x.serializer for x in self.product],
             #"page_number":self.page_no,
             #"total_product_pages": len(self.product)//Sub_category.items_per_page,
-            "created_by": self.created_by,
+            'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
             'created_at': str(self.created_at),
             'modified_by': None if self.modified_by is None else str(self.modified_by),
             'modified_at': None if self.modified_at is None else str(self.modified_at)
@@ -206,7 +207,7 @@ class Product(db.Model):
         "brand_name": None if self.brands is None else self.brands.brand_name,
         "product_description": self.product_description,
         "product_image": [x.serializer for x in self.product_image],
-        "created_by": self.created_by,
+        'created_by': [x for x in db.session.execute(text("select username from users where id=%s"%(self.created_by)))][0][0],
         'created_at': str(self.created_at),
         'modified_by': None if self.modified_by is None else str(self.modified_by),
         'modified_at': None if self.modified_at is None else str(self.modified_at)
