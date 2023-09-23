@@ -66,6 +66,6 @@ def token_required(f):
                 'message': 'token is invalid here %s'%(e),
                 "data": None
             }
-            return response, 401
+            return response, 200
         return f(current_user, *args, **kwargs)
     return decorated
