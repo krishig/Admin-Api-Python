@@ -20,7 +20,7 @@ def post_user_login(auth):
                 'public_id': user.id,
                 'username': user.username,
                 'role': user.Role,
-                'exp': datetime.utcnow() + timedelta(days=7)
+                'exp': datetime.utcnow() + timedelta(minutes=1)
             }
                 , BaseConfig.SECRET_KEY,
                 "HS256"
@@ -63,7 +63,7 @@ def token_required(f):
             logging.error("409"+"-"+e.__repr__())
             response = {
                 "error": True,
-                'message': 'token is invalid here',
+                'message': 'token is invalid here %s'%(e),
                 "data": None
             }
             return response, 401
