@@ -60,10 +60,10 @@ def token_required(f):
         # print(current_user.user_role)
         except Exception as e:
             print(e)
-            logging.error("409"+"-"+e.__repr__())
+            logging.error("200"+"-"+e.__repr__())
             response = {
                 "error": True,
-                'message': 'token is invalid here %s'%(e),
+                'message': 'Please login again!',
                 "data": None
             }
             return response, 200
