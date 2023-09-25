@@ -2,19 +2,35 @@ import jwt
 from functools import wraps
 from datetime import datetime,timedelta
 from app.config import *
-from app.models import Users
+from app.models import Users,Roles
 from app import request
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     filename='app.log',
                     filemode='a')
-def post_user_login(auth):
+def post_user_login(auth,user_role):
     user = None
+    if user_role not in ["Admin","Sales"]:
+        response = {
+            "error": True,
+            "message": "login failed wrong role passed in url",
+            "data": None
+            }
+        return response
     if not auth or not auth["username"] or not auth["password"]:
         return "could not verify"
     user = Users.query.filter_by(username=auth["username"], password=auth["password"]).first()
     if user is not None:
+        roles = Roles.query.filter_by(id=user.Role).first()
+
+        if user_role!="Sales" and user_role!=roles.role_name:
+            response = {
+            "error": True,
+            "message": "Sorry, you don't have access",
+            "data": None
+            }
+            return response
         if user.password:
             token = jwt.encode({
                 'public_id': user.id,

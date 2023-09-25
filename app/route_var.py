@@ -152,6 +152,9 @@ image_model = api.model(
 # image_parser = reqparse.RequestParser()
 # image_parser.add_argument('images', type=FileStorage, location='files',action="append")
 
+user_role_parser = reqparse.RequestParser()
+user_role_parser.add_argument("user_role",type=str,help="Enter Role Admin/Sales", location='args')
+
 role_parser = reqparse.RequestParser()
 role_parser.add_argument("id",type=int,help="Enter Role id", location='args')
 
