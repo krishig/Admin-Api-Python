@@ -7,7 +7,8 @@ from app.route_var import signup_model, signup_model_patch, login_model, role_mo
     product_model, product_parser, product_model_patch, image_model, role_parser_req, role_parser, user_parser_req, \
     sub_category_parser_req, image_id_parser, page_number, items_per_page, image_url_parser, search_product, \
     search_brand, search_sub_category, \
-    filter_product_sub_category_id, filter_product_brand_id, search_user, filter_product_category_id, filter_category_id
+    filter_product_sub_category_id, filter_product_brand_id, search_user, filter_product_category_id, \
+    filter_category_id, user_role_parser
 from app.models import Users,Roles,Brands
 from app.service.product_image_service import post_product_image,delete_product_image
 from app.service.role_service import get_role_list,post_roles,delete_roles,patch_roles
@@ -87,10 +88,11 @@ class user(Resource):
 
 @api.route('/user/login')
 class user_login(Resource):
-    @api.expect(login_model)
+    @api.expect(login_model,user_role_parser)
     def post(self):
         auth = api.payload
-        return post_user_login(auth)
+        user_role=user_role_parser.parse_args()
+        return post_user_login(auth,user_role=user_role["user_role"])
 
 @api.route('/product_brands')
 class product_brands(Resource):
